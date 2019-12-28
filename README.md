@@ -54,10 +54,55 @@ execute the below command in the terminal:
 python etl.py
 ```
 
-### Locally (Only works if you have AWS S3 and EMR access)
+### Locally in Ubuntu (Only works if you have AWS S3 and EMR access)
 
-*. Download `data` from this repo and upload the folders `song_data` and `log_data` with all of its contents in your S3 bucket.
-*. Change the `input_file` and `output_file` paths in `etl.py` with your S3 bucket file path.
-*. Update the AWS Configuration details in `dl.cfg` file with yours.
-*. 
+Ensure you have Ubuntu 16.04 or 18.04 installed.
+
+* Download `data` from this repo and upload the folders `song_data` and `log_data` with all of its contents in your S3 bucket.
+* Change the `input_data` and `output_data` paths in `etl.py` with your S3 bucket file path.
+* Update the AWS Configuration details in `dl.cfg` file with yours.
+* Sign into your AWS Console and under services click on **EC2** as shown in the below image
+* Click on **Key Pairs** on the left as shown in the below image.
+* Click on **Create Key Pair** and give it a name (in my case name is spark-cluster). This will automatically download a `.pem` file in your machine. 
+* Under services, Click on **EMR** as shown in the below image.
+* Click on **Create Cluster**.
+* Setup the configurations of your cluster to match the configurations shown in the below images and then click **Create Cluster**.
+* You will now be redirected to a page similar to one shown in below image where it says Cluster is *Starting*. Wait until it changes to
+Cluster is *Running*. This could take upto 10 minutes depending on how fast all the `m5.xlarge` instances can be provisioned.
+* Once it says Cluster is *Running* like in the image below, then open a terminal in your Ubuntu machine and clone the contents of this repo into a local directory.
+* Connect to the master node of your Hadoop EMR Cluster over ssh from ubuntu terminal by following the section **"Connect to the Master Node Using SSH and an Amazon EC2 Private Key on Linux, Unix, and Mac OS X"** in this [link](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-connect-master-node-ssh.html).
+* From another terminal, copy over the files `dl.cfg` and `etl.py` from your local directory to the Master node by executing the below command:
+```bash
+scp /pathtothefiles clustername:~/
+```
+
+In my case this for example would be:
+```bash
+scp ~/Desktop/sparkify_log_small.json spark-cluster:~/
+```
+
+* Make the `etl.py` script executable by executing the below command:
+```bash
+chmod +x etl.py
+```
+
+* Execute the below command to find out where in the master node is spark-submit located as this path may vary amongst different nodes.
+```bash
+which spark-submit
+```
+
+* In my case the returned path is `/usr/bin/spark-submit`. Lastly, we need to submit a spark job through the terminal by executing the below command:
+```bash
+/pathtosparksubmit --master yarn ./etl.py
+```
+In my case this for example will look like below:
+```bash
+/usr/bin/spark-submit --master yarn ./etl.py
+```
+
+* The script will take few minutes to finish running and you should see `.parquet` files being generated in your provided S3 bucket 
+in the parameter `output_data`.
+
+
+
 
