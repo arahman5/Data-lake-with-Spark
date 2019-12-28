@@ -27,7 +27,7 @@ The reason that I chose a relational database management system for this project
 
 ## Entity Relationship Diagram (ERD)
 
-![Image](https://github.com/arahman5/Data-Modeling-with-PostgreSQL/blob/master/resource/ERD.PNG)
+![Image](https://github.com/arahman5/Data-lake-with-Spark/blob/master/resource/ERD.PNG)
 
 The above represents the entity relationship diagram which shows how the different keys within the JSON logs can be connected together in a star schema. **songplays** is the fact table showing foreign keys that connect this table to all the other dimension tables. **users, time, songs, artists** are all dimension tables, each containing a primary key unique to each table. A star schema was chosen for this database design because of the following reasons:
 
@@ -62,14 +62,27 @@ Ensure you have Ubuntu 16.04 or 18.04 installed.
 * Change the `input_data` and `output_data` paths in `etl.py` with your S3 bucket file path.
 * Update the AWS Configuration details in `dl.cfg` file with yours.
 * Sign into your AWS Console and under services click on **EC2** as shown in the below image
+![image](https://github.com/arahman5/Data-lake-with-Spark/blob/master/resource/EC2.PNG)
+
 * Click on **Key Pairs** on the left as shown in the below image.
+![image](https://github.com/arahman5/Data-lake-with-Spark/blob/master/resource/ec2_key_pair.PNG)
+
 * Click on **Create Key Pair** and give it a name (in my case name is spark-cluster). This will automatically download a `.pem` file in your machine. 
 * Under services, Click on **EMR** as shown in the below image.
+![image](https://github.com/arahman5/Data-lake-with-Spark/blob/master/resource/EMR.PNG)
 * Click on **Create Cluster**.
+![image](https://github.com/arahman5/Data-lake-with-Spark/blob/master/resource/create_cluster.PNG)
 * Setup the configurations of your cluster to match the configurations shown in the below images and then click **Create Cluster**.
+![image](https://github.com/arahman5/Data-lake-with-Spark/blob/master/resource/cluster_1.PNG)
+![image](https://github.com/arahman5/Data-lake-with-Spark/blob/master/resource/cluster_2.PNG)
+
 * You will now be redirected to a page similar to one shown in below image where it says Cluster is *Starting*. Wait until it changes to
 Cluster is *Running*. This could take upto 10 minutes depending on how fast all the `m5.xlarge` instances can be provisioned.
+![image](https://github.com/arahman5/Data-lake-with-Spark/blob/master/resource/cluster_starting.PNG)
+
 * Once it says Cluster is *Running* like in the image below, then open a terminal in your Ubuntu machine and clone the contents of this repo into a local directory.
+![image](https://github.com/arahman5/Data-lake-with-Spark/blob/master/resource/cluster_running.PNG)
+
 * Connect to the master node of your Hadoop EMR Cluster over ssh from ubuntu terminal by following the section **"Connect to the Master Node Using SSH and an Amazon EC2 Private Key on Linux, Unix, and Mac OS X"** in this [link](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-connect-master-node-ssh.html).
 * From another terminal, copy over the files `dl.cfg` and `etl.py` from your local directory to the Master node by executing the below command:
 ```bash
