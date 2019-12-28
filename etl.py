@@ -113,7 +113,9 @@ def process_log_data(spark, input_data, output_data):
     # create view for time table
     df.createOrReplaceTempView("time") 
     
-    # extract columns to create time table, Adding Not null to ts as it is the primary key, its very unlikely that ts will be same for two rows as its time in miliseconds
+    # extract columns to create time table, Adding Not null to ts as it is the primary key, its very unlikely that ts will be 
+    # same for two rows as its time in miliseconds. Much easier and striaghtforward to extract day, hour, week etc. from timestamp
+    # through SQL then converting timestamp in Dataframe to datetime and then performing extraction 
     time_table = spark.sql("""
                             SELECT 
                             timestamp_data.start_time_prev as start_time,
@@ -146,8 +148,12 @@ def process_log_data(spark, input_data, output_data):
     df.createOrReplaceTempView("songplays") 
     
     
-
-    # extract columns from joined song and log datasets to create songplays table, applying monotonically id increasing function to increment id for songplay id and make it unique and not null. Joining the two views songplays and song_data on artist name and song title to obtain the information about song_id and artist_id columns. Every song that has a title should have a song id and every artist that has a name should have an aritst id.
+"""
+    extract columns from joined song and log datasets to create songplays table, applying monotonically id increasing function 
+    to increment id for songplay id and make it unique and not null. Joining the two views songplays and song_data on artist 
+    name and song title to obtain the information   # about song_id and artist_id columns. Every song that has a title should 
+    have a song id and every artist that has a name should have an aritst id.
+"""
     songplays_table = spark.sql("""
                                 SELECT monotonically_increasing_id() as songplay_id,
                                 to_timestamp(ts/1000) as start_time,
